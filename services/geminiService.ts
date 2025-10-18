@@ -1,16 +1,10 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import type { Caption } from "../types";
 
-const API_KEY = process.env.API_KEY;
-
-if (!API_KEY) {
-  // In a real app, you might want to handle this more gracefully.
-  // For this context, we assume the key is provided in the environment.
-  console.warn("Gemini API key not found in environment variables.");
-}
-
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+// FIX: Per coding guidelines, the API key must be obtained exclusively from
+// process.env.API_KEY and used directly during client initialization.
+// The availability of the key is a hard requirement and should not be checked in the code.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const captionSchema = {
   type: Type.ARRAY,
@@ -34,10 +28,12 @@ const captionSchema = {
   },
 };
 
-export const generateCaptions = async (postDescription: string): Promise<Caption[]> => {
+export const generateCaptions = async (postDescription: string, templateName: string): Promise<Caption[]> => {
   const prompt = `
     You are an expert social media manager specializing in creating viral content. 
+    A user has selected the "${templateName}" template for their post.
     Based on the following post description, generate exactly 3 distinct and catchy captions.
+    Each caption must be tailored to the tone and purpose of a "${templateName}" post.
     For each caption, also provide a list of relevant and trending hashtags.
 
     Post Description: "${postDescription}"

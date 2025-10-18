@@ -1,11 +1,9 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { Header } from './components/Header';
 import { CaptionGenerator } from './components/CaptionGenerator';
 import { CaptionCard } from './components/CaptionCard';
 import { EarnCreditsPanel } from './components/EarnCreditsPanel';
-import { Leaderboard } from './components/Leaderboard';
-import { TOP_SHARERS, INITIAL_CREDITS, SHARE_REWARD } from './constants';
+import { INITIAL_CREDITS, SHARE_REWARD } from './constants';
 import { generateCaptions } from './services/geminiService';
 import { Toast } from './components/Toast';
 import type { Caption, ToastType } from './types';
@@ -25,7 +23,7 @@ const App: React.FC = () => {
     }
   }, [toast]);
 
-  const handleGenerate = useCallback(async (postDescription: string) => {
+  const handleGenerate = useCallback(async (postDescription: string, templateName: string) => {
     if (userCredits <= 0) {
       setToast({ message: "You're out of credits! Share to earn more.", type: 'error' });
       return;
@@ -39,7 +37,7 @@ const App: React.FC = () => {
     setGeneratedCaptions([]);
 
     try {
-      const captions = await generateCaptions(postDescription);
+      const captions = await generateCaptions(postDescription, templateName);
       setGeneratedCaptions(captions);
       setUserCredits(prev => prev - 1);
       setToast({ message: '1 credit used. On to the next one!', type: 'info' });
@@ -64,7 +62,7 @@ const App: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-8 p-6 rounded-xl bg-ajrak-bg-pattern animate-pan-bg [background-size:20px] border border-base-300/50">
             <h1 className="text-4xl md:text-5xl font-bold text-center bg-gradient-to-r from-brand-primary to-brand-secondary text-transparent bg-clip-text">
               AI Caption Boost 🪄
             </h1>
@@ -93,12 +91,11 @@ const App: React.FC = () => {
           {/* Sidebar */}
           <aside className="space-y-8">
             <EarnCreditsPanel onVerifyShare={handleShareVerification} />
-            <Leaderboard sharers={TOP_SHARERS} />
           </aside>
         </div>
       </main>
       <footer className="text-center p-4 text-gray-500 text-sm">
-        <p>Built with React, Tailwind, and Gemini AI. Share to support!</p>
+        <p>Crafted with ❤️ from Sindh. Powered by Gemini AI.</p>
       </footer>
     </div>
   );
